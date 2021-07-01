@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.4;
 pragma abicoder v2;
 
 import {ISuperfluid, ISuperToken, ISuperAgreement, SuperAppDefinitions} from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
@@ -20,6 +20,16 @@ contract StreamPayment is SuperAppBase {
     address private _socialTokenAddress;
     uint96 private _paymentRate = 385802469135802;
     uint96 private _rewardRate = 385802469135802;
+
+    // event
+    event FanPaymentStreamCreated(address fan);
+    event FanPaymentStreamStopped(address fan);
+    event AppToCreatorStreamCreated(address creator);
+    event AppToCreatorStreamUpdated(address creator);
+    event AppToFanStreamCreated(address fan);
+    // general event
+    event PaymentStreamStopped(address fan);
+    event RewardStreamStopped(address fan);
 
     constructor(
         ISuperfluid host,
@@ -42,26 +52,45 @@ contract StreamPayment is SuperAppBase {
         _host.registerApp(configWord);
     }
 
+    // start payment
+    function startPayment(bytes calldata _context)
+        public
+        returns (bytes memory newContext)
+    {
+        newContext = _startPaymentFromFanFlow(_context);
+        return _startRewardToFanFlow(newContext);
+    }
+
     // stop flow
     function stopPayment(bytes calldata context)
         public
         returns (bytes memory _context)
     {
-        _stopPaymentFromFanFlow(context);
-        return _stopRewardToFanFlow(context);
+        address sender = _host.decodeCtx(_context).msgSender;
+
+        _context = _stopPaymentFromFanFlow(context);
+        _context = _stopRewardToFanFlow(_context);
+
+        emit PaymentStreamStopped(sender);
     }
 
     /**************************************************************************
      * SuperApp callbacks
      *************************************************************************/
 
-    // trigger after agreement has been created
+    //
+    /**
+     * @dev callback after agreement has been created
+     * Agreement is trigger on 2 condition
+     * 1. Fan streaming payment to creator
+     * 2. Creator streaming social token to contract
+     */
     function afterAgreementCreated(
         ISuperToken _superToken,
         address _agreementClass,
         bytes32, //_agreementId,
         bytes calldata, /*_agreementData*/
-        bytes calldata, // _cbdata,
+        bytes calldata, //_cbdata,
         bytes calldata _ctx
     )
         external
@@ -70,7 +99,15 @@ contract StreamPayment is SuperAppBase {
         onlyHost
         returns (bytes memory newCtx)
     {
-        return _startPayment(_ctx);
+        (uint256 action, ) = abi.decode(
+            _host.decodeCtx(_ctx).userData,
+            (uint256, bytes)
+        );
+
+        // Check if the payment is from fan or from creator
+        if (action == 1) {} else {
+            newCtx = startPayment(_ctx);
+        }
     }
 
     // trigger after agreemeent has been updated
@@ -88,20 +125,12 @@ contract StreamPayment is SuperAppBase {
         onlyHost
         returns (bytes memory newCtx)
     {
-        return _startPayment(_ctx);
+        return startPayment(_ctx);
     }
 
     /**************************************************************************
      * Private
      *************************************************************************/
-    // start payment
-    function _startPayment(bytes calldata _context)
-        public
-        returns (bytes memory newContext)
-    {
-        newContext = _startPaymentFromFanFlow(_context);
-        return _startRewardToFanFlow(newContext);
-    }
 
     /**
      * @dev Start stream from the fan -> contract based on specified payment rate
@@ -111,21 +140,11 @@ contract StreamPayment is SuperAppBase {
         private
         returns (bytes memory newContext)
     {
-        (newContext, ) = _host.callAgreementWithContext(
-            _agreement,
-            abi.encodeWithSelector(
-                _agreement.createFlow.selector,
-                _paymentToken,
-                address(this),
-                _paymentRate,
-                new bytes(0)
-            ),
-            "0x",
-            _context
-        );
+        address sender = _host.decodeCtx(_context).msgSender;
+        emit FanPaymentStreamCreated(sender);
 
         // check if the stream from SuperApp -> creator is available
-        return _updatePaymentToCreatorFlow(newContext);
+        newContext = _updatePaymentToCreatorFlow(_context);
     }
 
     /**
@@ -135,6 +154,8 @@ contract StreamPayment is SuperAppBase {
         private
         returns (bytes memory newContext)
     {
+        address sender = _host.decodeCtx(_context).msgSender;
+
         (newContext, ) = _host.callAgreementWithContext(
             _agreement,
             abi.encodeWithSelector(
@@ -147,6 +168,8 @@ contract StreamPayment is SuperAppBase {
             "0x",
             _context
         );
+
+        emit FanPaymentStreamStopped(sender);
 
         _updatePaymentToCreatorFlow(newContext);
     }
@@ -178,6 +201,8 @@ contract StreamPayment is SuperAppBase {
                 "0x",
                 _context
             );
+
+            emit AppToCreatorStreamUpdated(_creatorAddress);
         } else {
             (newContext, ) = _host.callAgreementWithContext(
                 _agreement,
@@ -191,6 +216,8 @@ contract StreamPayment is SuperAppBase {
                 "0x",
                 _context
             );
+
+            emit AppToCreatorStreamCreated(_creatorAddress);
         }
 
         return newContext;
@@ -203,12 +230,14 @@ contract StreamPayment is SuperAppBase {
         private
         returns (bytes memory newContext)
     {
+        address sender = _host.decodeCtx(_context).msgSender;
+
         (newContext, ) = _host.callAgreementWithContext(
             _agreement,
             abi.encodeWithSelector(
                 _agreement.createFlow.selector,
                 _rewardToken,
-                _host.decodeCtx(_context).msgSender,
+                sender,
                 _rewardRate,
                 new bytes(0)
             ),
@@ -216,13 +245,13 @@ contract StreamPayment is SuperAppBase {
             _context
         );
 
-        return _updateRewardFromCreatorFlow(newContext);
+        emit AppToFanStreamCreated(sender);
     }
 
     /**
      * @dev Stop stream from fan to creator
      */
-    function _stopRewardToFanFlow(bytes calldata _context)
+    function _stopRewardToFanFlow(bytes memory _context)
         private
         returns (bytes memory newContext)
     {
@@ -232,7 +261,7 @@ contract StreamPayment is SuperAppBase {
             _agreement,
             abi.encodeWithSelector(
                 _agreement.deleteFlow.selector,
-                _paymentToken,
+                _rewardToken,
                 address(this),
                 _host.decodeCtx(_context).msgSender,
                 new bytes(0)
@@ -240,53 +269,6 @@ contract StreamPayment is SuperAppBase {
             new bytes(0),
             _context
         );
-
-        return _updatePaymentToCreatorFlow(newContext);
-    }
-
-    /**
-     * @dev Check if the's already stream for reward token from creator -> app.
-     * Create one, if doesnt exists, or update flow if existed.
-     */
-    function _updateRewardFromCreatorFlow(bytes memory _context)
-        private
-        returns (bytes memory newContext)
-    {
-        (, int96 flowRate, , ) = _agreement.getFlow(
-            _rewardToken,
-            _creatorAddress,
-            address(this)
-        );
-
-        if (flowRate != int96(0)) {
-            (newContext, ) = _host.callAgreementWithContext(
-                _agreement,
-                abi.encodeWithSelector(
-                    _agreement.updateFlow.selector,
-                    _rewardToken,
-                    address(this),
-                    _agreement.getNetFlow(_rewardToken, address(this)),
-                    new bytes(0)
-                ),
-                new bytes(0),
-                _context
-            );
-        } else {
-            (newContext, ) = _host.callAgreementWithContext(
-                _agreement,
-                abi.encodeWithSelector(
-                    _agreement.createFlow.selector,
-                    _rewardToken,
-                    address(this),
-                    _agreement.getNetFlow(_rewardToken, address(this)),
-                    new bytes(0)
-                ),
-                new bytes(0),
-                _context
-            );
-        }
-
-        return newContext;
     }
 
     function _isCFAv1(address agreementClass) private view returns (bool) {

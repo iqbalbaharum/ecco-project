@@ -23,7 +23,7 @@ const INFURA_API_KEY = "e4b4cdf2ab2a417cb835edff7e919f6e"
 const PRIVATE_KEY = "7c2d556c19353a93bd1871f819613de131d8e269b4d9c60246c73f4c696f0475"
 
 module.exports = {
-  solidity: "0.8.6",
+  solidity: "0.8.4",
   defaultNetwork: "hardhat",
   networks: {
     hardhat: {
