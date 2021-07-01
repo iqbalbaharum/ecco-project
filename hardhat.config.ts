@@ -1,5 +1,8 @@
 import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -19,8 +22,8 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
  * @type import('hardhat/config').HardhatUserConfig
  */
 
-const INFURA_API_KEY = "e4b4cdf2ab2a417cb835edff7e919f6e"
-const PRIVATE_KEY = "7c2d556c19353a93bd1871f819613de131d8e269b4d9c60246c73f4c696f0475"
+const INFURA_API_KEY = process.env.INFURA_KEY
+const PRIVATE_KEY = process.env.PRIVATE_KEY
 
 module.exports = {
   solidity: "0.8.4",

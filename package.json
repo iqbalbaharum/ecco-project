@@ -24,6 +24,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.1.0",
     "@superfluid-finance/ethereum-contracts": "^1.0.0-rc.4",
-    "@superfluid-finance/js-sdk": "^0.4.3"
+    "@superfluid-finance/js-sdk": "^0.4.3",
+    "dotenv": "^10.0.0"
   }
 }
