@@ -1,5 +1,5 @@
 ### Questions
 
-1. \_host.decodeCtx(context).msgSender vs msgSender
-2. Context?
-3. Create Custom Super Token
+1. Create creator account
+2. Create ERC20 social token
+3. Creator able to stream social token to SuperApp
