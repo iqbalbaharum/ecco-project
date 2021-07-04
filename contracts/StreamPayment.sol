@@ -13,7 +13,7 @@ import "./interfaces/IStreamPayment.sol";
 contract StreamPayment is SuperAppBase, IStreamPayment {
 
     struct EccoCreator {
-        uint id;
+        int id;
         ISuperToken paymentToken;
         ISuperToken rewardToken;
         uint paymentRate;
@@ -24,7 +24,7 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     IConstantFlowAgreementV1 private _agreement;
 
     mapping(address => EccoCreator) private creatorMap;
-    uint private creatorCount;
+    int private creatorCount;
 
     constructor(
         ISuperfluid host,
@@ -66,18 +66,17 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     }
 
     function getPaymentRate(address creator) external override view returns (uint) {
-        require(isEccoCreator(creator));
+        require(isEccoCreator(creator), 'Not a Ecco Creator');
         EccoCreator storage eccoCreator = creatorMap[creator];
         return eccoCreator.paymentRate;
     }
 
     function isEccoCreator(address creator) public view returns (bool) {
        EccoCreator storage eccoCreator = creatorMap[creator];
-       require(_contains(eccoCreator.id), 'Not a Ecco Creator');
-       return true;
+       return _contains(eccoCreator.id);
     }
 
-    function _contains(uint eccoCreatorID) private view returns (bool){
+    function _contains(int eccoCreatorID) private view returns (bool){
         return eccoCreatorID > 0 && eccoCreatorID <= creatorCount;
     }
 
@@ -86,7 +85,7 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         private
         returns (bytes memory newContext)
     {
-        require(isEccoCreator(creatorAddress));
+        require(isEccoCreator(creatorAddress), 'Not a Ecco Creator');
         EccoCreator storage eccoCreator = creatorMap[creatorAddress];
 
         newContext = _startPaymentFromFanFlow(_context, creatorAddress, eccoCreator);
@@ -105,7 +104,7 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
             (address)
         );
 
-        require(isEccoCreator(creatorAddress));
+        require(isEccoCreator(creatorAddress), 'Not a Ecco Creator');
         EccoCreator storage eccoCreator = creatorMap[creatorAddress];
 
         _context = _stopPaymentFromFanFlow(context, creatorAddress, eccoCreator);
