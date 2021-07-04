@@ -5,7 +5,8 @@ import { Body } from '../components'
 import { Button } from '@material-ui/core';
 import NewCreatorModal from '../components/ui/NewCreatorModal'
 import CreatorDashboard from '../components/dashboard/CreatorDashboard'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import {isEccoCreator} from '../utils/stream-payment'
 
 function Dashboard () {
 
@@ -13,13 +14,7 @@ function Dashboard () {
   const [account, setAccount] = useState('')
   const [isCreator, setIsCreator] = useState(false)
 
-  useEffect(() => {
-    if (!account) {
-      getAccountsUsingWeb3()
-    }
-  }, [getAccountsUsingWeb3, account]);
-
-  async function getAccountsUsingWeb3 () {
+  const getWeb3Account = useCallback(async() => {
     var web3 = window.web3;
     if (typeof web3 !== 'undefined') {
       web3 = new Web3(web3.currentProvider);
@@ -27,7 +22,14 @@ function Dashboard () {
         setAccount(account)
       });
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    if (!account) {
+      getWeb3Account()
+      setIsCreator(isEccoCreator())
+    }
+  }, [account, getWeb3Account]);
 
   function onCreateCreatorHandler () {
     setModalIsOpen(true);

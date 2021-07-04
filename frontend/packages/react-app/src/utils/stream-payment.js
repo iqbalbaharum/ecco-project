@@ -3,10 +3,25 @@ import { Web3Provider } from "@ethersproject/providers";
 import { payment } from '../../../contracts/src/abis'
 const SuperfluidSDK = require("@superfluid-finance/js-sdk");
 
-const SUPERAPP_ROPSTEN = process.env.STREAM_PAYMENT_ROPSTEN
+const SUPERAPP_ROPSTEN = process.env.SUPERAPP_PAYMENT_ROPSTEN
 
 function getContract (provider) {
   return new ethers.Contract(SUPERAPP_ROPSTEN, payment, provider)
+}
+
+async function isEccoCreator(signerAddress) {
+  const contract = getContract(signerAddress)
+  return await contract.isEccoCreator(signerAddress)
+}
+
+async function createCreator(creatorAddress, paymentTokenAddress, rewardTokenAddress, paymentRate, rewardRate) {
+  const contract = getContract(creatorAddress)
+  await contract._createEccoCreator(
+    creatorAddress,
+    paymentTokenAddress,
+    rewardTokenAddress,
+    paymentRate,
+    rewardRate)
 }
 
 /**
@@ -117,4 +132,11 @@ async function cancelSocialStream (signerAddress, socialTokenAddress) {
   });
 }
 
-export { streamPayment, streamSocialToken, cancelPaymentStream, cancelSocialStream }
+export { 
+  streamPayment,
+  streamSocialToken,
+  cancelPaymentStream,
+  cancelSocialStream,
+  isEccoCreator,
+  createCreator
+}
