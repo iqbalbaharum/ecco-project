@@ -1,17 +1,21 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useContext } from "react";
 import { Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
+import AppContext from '../store/app'
+import { setIsCreator } from '../utils/stream-payment'
 
 // Enter a valid infura key here to avoid being rate limited
 // You can get a key for free at https://infura.io/register
-const INFURA_ID = process.env.INFURA_KEY;
+const INFURA_ID = process.env.REACT_APP_INFURA_KEY;
 
-const NETWORK_NAME = "ropsten";
+const NETWORK_NAME = process.env.REACT_APP_NETWORK;
 
-function useWeb3Modal(config = {}) {
-  const [provider, setProvider] = useState();
+function useWeb3Modal (config = {}) {
+  const appContext = useContext(AppContext)
+
   const [autoLoaded, setAutoLoaded] = useState(false);
+  const [provider, setProvider] = useState(null);
   const { autoLoad = true, infuraId = INFURA_ID, NETWORK = NETWORK_NAME } = config;
 
   // Web3Modal also supports many other wallets.
@@ -33,14 +37,16 @@ function useWeb3Modal(config = {}) {
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
     setProvider(new Web3Provider(newProvider));
-  }, [web3Modal]);
+    appContext.setWalletProvider(new Web3Provider(newProvider))
+  }, [appContext, web3Modal]);
 
   const logoutOfWeb3Modal = useCallback(
     async function () {
       await web3Modal.clearCachedProvider();
+      appContext.clearWallet()
       window.location.reload();
     },
-    [web3Modal],
+    [appContext, web3Modal],
   );
 
   // If autoLoad is enabled and the the wallet had been loaded before, load it automatically now.

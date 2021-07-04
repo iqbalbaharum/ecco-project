@@ -5,35 +5,33 @@ import { Body } from '../components'
 import { Button } from '@material-ui/core';
 import NewCreatorModal from '../components/ui/NewCreatorModal'
 import CreatorDashboard from '../components/dashboard/CreatorDashboard'
-import { useState, useEffect, useCallback } from 'react';
-import {isEccoCreator} from '../utils/stream-payment'
+import { useState, useContext, useEffect, useCallback } from 'react';
+import { isEccoCreator } from '../utils/stream-payment'
+import AppContext from '../store/app'
 
 function Dashboard () {
+  const appContext = useContext(AppContext)
 
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [account, setAccount] = useState('')
   const [isCreator, setIsCreator] = useState(false)
 
-  const getWeb3Account = useCallback(async() => {
+  const getWeb3Account = useCallback(async () => {
     var web3 = window.web3;
     if (typeof web3 !== 'undefined') {
       web3 = new Web3(web3.currentProvider);
-      web3.eth.getAccounts().then((account) => {
-        setAccount(account)
+      await web3.eth.getAccounts().then((accounts) => {
+        setAccount(accounts)
+        if (accounts) { setIsCreator(isEccoCreator(accounts[0] ?? false)) }
       });
     }
   }, [])
 
   useEffect(() => {
-
-    async function load() {
-      if (!account) {
-        await getWeb3Account()
-        setIsCreator(isEccoCreator(account))
-      }
+    if (!appContext.provider) {
+      getWeb3Account()
     }
-    load()
-  }, [account, getWeb3Account]);
+  }, [appContext.provider, getWeb3Account])
 
   function onCreateCreatorHandler () {
     setModalIsOpen(true);
@@ -48,7 +46,7 @@ function Dashboard () {
       <NewCreatorModal currentUser={account} open={modalIsOpen} handleCancel={() => setModalIsOpen(false)} handleCreate={() => setModalIsOpen(false)}></NewCreatorModal>
     </Body>}
 
-    {!isCreator && <CreatorDashboard />}
+    {isCreator && <CreatorDashboard />}
   </div>)
 }
 

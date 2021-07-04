@@ -19,14 +19,14 @@ function WalletButton ({ provider, loadWeb3Modal, logoutOfWeb3Modal }) {
   );
 }
 
-function MainNavigationLayout() {
-  
+function MainNavigationLayout () {
+
   const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal();
 
   return (
     <Header>
       <WalletButton provider={provider} loadWeb3Modal={loadWeb3Modal} logoutOfWeb3Modal={logoutOfWeb3Modal} />
-    </Header>  
+    </Header>
   )
 }
 

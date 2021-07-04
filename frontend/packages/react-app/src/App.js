@@ -8,6 +8,7 @@ import { Route, Switch } from 'react-router-dom';
 // import GET_TRANSFERS from "./graphql/subgraph";
 import MainLayout from './components/layout/MainLayout'
 import Dashboard from './pages/Dashboard'
+import Fan from './pages/Fan'
 
 function App () {
   // const { loading, error, data } = useQuery(GET_TRANSFERS);
@@ -23,6 +24,9 @@ function App () {
       <Switch>
         <Route path="/" exact>
           <Dashboard />
+        </Route>
+        <Route path="/fan" exact>
+          <Fan />
         </Route>
       </Switch>
     </MainLayout>
