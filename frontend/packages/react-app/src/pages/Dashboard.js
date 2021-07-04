@@ -25,10 +25,14 @@ function Dashboard () {
   }, [])
 
   useEffect(() => {
-    if (!account) {
-      getWeb3Account()
-      setIsCreator(isEccoCreator())
+
+    async function load() {
+      if (!account) {
+        await getWeb3Account()
+        setIsCreator(isEccoCreator(account))
+      }
     }
+    load()
   }, [account, getWeb3Account]);
 
   function onCreateCreatorHandler () {

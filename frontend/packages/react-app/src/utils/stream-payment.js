@@ -1,12 +1,12 @@
 import { ethers } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
-import { payment } from '../../../contracts/src/abis'
+import { abis } from "@project/contracts";
 const SuperfluidSDK = require("@superfluid-finance/js-sdk");
 
 const SUPERAPP_ROPSTEN = process.env.SUPERAPP_PAYMENT_ROPSTEN
 
 function getContract (provider) {
-  return new ethers.Contract(SUPERAPP_ROPSTEN, payment, provider)
+  return new ethers.Contract(SUPERAPP_ROPSTEN, abis.payment, provider)
 }
 
 async function isEccoCreator(signerAddress) {
