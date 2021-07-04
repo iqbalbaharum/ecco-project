@@ -1,17 +1,21 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.4;
 
+import { ISuperToken } from "@superfluid-finance/ethereum-contracts/contracts/interfaces/superfluid/ISuperfluid.sol";
+
 interface IStreamPayment {
 
 
     // method to create ecco creator to store the mapping
-    function createEccoCreator(bytes calldata _context) external;
+    function createEccoCreator(address creatorAddr,
+        ISuperToken paymentToken, ISuperToken rewardToken,
+        uint paymentRate, uint rewardRate) external;
 
     // Method to get the payment rate of the creator
     function getPaymentRate(address creator) external view returns (uint);
 
     // Method to stop payment from fan to creator
-    function stopPayment(bytes calldata context) external returns (bytes memory _context);
+    function stopPaymentToEccoCreator(address creator) external;
 
     // Triggered when #createEccoCreator is called
     event EccoCreatorCreated(address creator);

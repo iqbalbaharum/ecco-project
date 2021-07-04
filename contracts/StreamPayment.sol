@@ -30,6 +30,9 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         ISuperfluid host,
         IConstantFlowAgreementV1 cfa
     ) {
+        assert(address(host) != address(0));
+        assert(address(cfa) != address(0));
+
         _host = host;
         _agreement = cfa;
 
@@ -41,24 +44,11 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         _host.registerApp(configWord);
     }
 
-    function createEccoCreator(bytes calldata _context) external override {
-
-        (address creatorAddr, 
+    function createEccoCreator(address creatorAddr,
         ISuperToken paymentToken, ISuperToken rewardToken,
-        uint paymentRate, uint rewardRate) = abi.decode(
-            _host.decodeCtx(_context).userData,
-            (address, ISuperToken, ISuperToken, uint, uint)
-        );
-
-        _createEccoCreator(creatorAddr, paymentToken, rewardToken, paymentRate, rewardRate);
-        
-    }
-
-    function _createEccoCreator(address creatorAddr,
-        ISuperToken paymentToken, ISuperToken rewardToken,
-        uint paymentRate, uint rewardRate) public {
+        uint paymentRate, uint rewardRate) external override {
         EccoCreator storage dupCreator = creatorMap[creatorAddr];
-        require(_contains(dupCreator.id), 'Duplicate Ecco Creator');
+        require(!_contains(dupCreator.id), 'Duplicate Ecco Creator');
         creatorCount++;
         EccoCreator memory eccoCreator = EccoCreator(creatorCount, paymentToken, rewardToken, paymentRate, rewardRate);
         creatorMap[creatorAddr] = eccoCreator;
@@ -93,24 +83,15 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     }
 
     // stop flow
-    function stopPayment(bytes calldata context)
-        external override
-        returns (bytes memory _context)
-    {
-        address sender = _host.decodeCtx(_context).msgSender;
+    function stopPaymentToEccoCreator(address creator) external override {
 
-        (address creatorAddress) = abi.decode(
-            _host.decodeCtx(_context).userData,
-            (address)
-        );
+        require(isEccoCreator(creator), 'Not a Ecco Creator');
+        EccoCreator storage eccoCreator = creatorMap[creator];
 
-        require(isEccoCreator(creatorAddress), 'Not a Ecco Creator');
-        EccoCreator storage eccoCreator = creatorMap[creatorAddress];
+        _stopPaymentFromFanFlow(eccoCreator);
+        _stopRewardToFanFlow(eccoCreator);
 
-        _context = _stopPaymentFromFanFlow(context, creatorAddress, eccoCreator);
-        _context = _stopRewardToFanFlow(_context, eccoCreator);
-
-        emit PaymentStreamStopped(sender);
+        emit PaymentStreamStopped(msg.sender);
     }
 
     /**************************************************************************
@@ -144,7 +125,7 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         );
 
         // Check if the payment is from fan or from creator
-        if (action == 1) {} else {
+        if (action == 1) {
             newCtx = startPayment(_ctx, creatorAddress);
         }
     }
@@ -196,13 +177,8 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     /**
      * @dev Stop stream from fan to creator
      */
-    function _stopPaymentFromFanFlow(bytes calldata _context, address creator, EccoCreator memory eccoCreator)
-        private
-        returns (bytes memory newContext)
-    {
-        address sender = _host.decodeCtx(_context).msgSender;
-
-        (newContext, ) = _host.callAgreementWithContext(
+    function _stopPaymentFromFanFlow(EccoCreator memory eccoCreator) private {
+        _host.callAgreement(
             _agreement,
             abi.encodeWithSelector(
                 _agreement.deleteFlow.selector,
@@ -211,13 +187,12 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
                 msg.sender,
                 new bytes(0)
             ),
-            "0x",
-            _context
+            "0x"
         );
 
-        emit FanPaymentStreamStopped(sender);
+        emit FanPaymentStreamStopped(msg.sender);
 
-        _updatePaymentToCreatorFlow(newContext, creator, eccoCreator);
+        // _updatePaymentToCreatorFlow(newContext, creator, eccoCreator);
     }
 
     /**
@@ -298,23 +273,18 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     /**
      * @dev Stop stream from fan to creator
      */
-    function _stopRewardToFanFlow(bytes memory _context, EccoCreator memory eccoCreator)
-        private
-        returns (bytes memory newContext)
-    {
-        newContext = _context;
-
-        (newContext, ) = _host.callAgreementWithContext(
+    function _stopRewardToFanFlow(EccoCreator memory eccoCreator) private {
+        
+        _host.callAgreement(
             _agreement,
             abi.encodeWithSelector(
                 _agreement.deleteFlow.selector,
                 eccoCreator.rewardToken,
                 address(this),
-                _host.decodeCtx(_context).msgSender,
+                msg.sender,
                 new bytes(0)
             ),
-            new bytes(0),
-            _context
+            new bytes(0)
         );
     }
 
