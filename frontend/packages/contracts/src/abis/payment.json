@@ -73,6 +73,19 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      }
+    ],
+    "name": "EccoCreatorUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "fan",
         "type": "address"
       }
@@ -118,39 +131,6 @@
     ],
     "name": "RewardStreamStopped",
     "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "creatorAddr",
-        "type": "address"
-      },
-      {
-        "internalType": "contract ISuperToken",
-        "name": "paymentToken",
-        "type": "address"
-      },
-      {
-        "internalType": "contract ISuperToken",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "paymentRate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rewardRate",
-        "type": "uint256"
-      }
-    ],
-    "name": "_createEccoCreator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
   },
   {
     "inputs": [
@@ -404,9 +384,29 @@
   {
     "inputs": [
       {
-        "internalType": "bytes",
-        "name": "_context",
-        "type": "bytes"
+        "internalType": "address",
+        "name": "creatorAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ISuperToken",
+        "name": "paymentToken",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ISuperToken",
+        "name": "rewardToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "paymentRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardRate",
+        "type": "uint256"
       }
     ],
     "name": "createEccoCreator",
@@ -441,6 +441,25 @@
         "type": "address"
       }
     ],
+    "name": "getPaymentTokenAddress",
+    "outputs": [
+      {
+        "internalType": "contract ISuperToken",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      }
+    ],
     "name": "isEccoCreator",
     "outputs": [
       {
@@ -455,19 +474,46 @@
   {
     "inputs": [
       {
-        "internalType": "bytes",
-        "name": "context",
-        "type": "bytes"
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
       }
     ],
-    "name": "stopPayment",
-    "outputs": [
+    "name": "stopPaymentToEccoCreator",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       {
-        "internalType": "bytes",
-        "name": "_context",
-        "type": "bytes"
+        "internalType": "address",
+        "name": "creatorAddr",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ISuperToken",
+        "name": "paymentToken",
+        "type": "address"
+      },
+      {
+        "internalType": "contract ISuperToken",
+        "name": "rewardToken",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "paymentRate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rewardRate",
+        "type": "uint256"
       }
     ],
+    "name": "updateEccoCreator",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   }

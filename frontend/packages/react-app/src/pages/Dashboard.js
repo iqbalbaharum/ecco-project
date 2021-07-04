@@ -20,9 +20,12 @@ function Dashboard () {
     var web3 = window.web3;
     if (typeof web3 !== 'undefined') {
       web3 = new Web3(web3.currentProvider);
-      await web3.eth.getAccounts().then((accounts) => {
+      await web3.eth.getAccounts().then(async (accounts) => {
         setAccount(accounts)
-        if (accounts) { setIsCreator(isEccoCreator(accounts[0] ?? false)) }
+        if (accounts) {
+          const b = await isEccoCreator(accounts[0])
+          setIsCreator(b)
+        }
       });
     }
   }, [])
@@ -38,15 +41,19 @@ function Dashboard () {
   }
 
   return (<div>
-    {isCreator && <Body>
+    {!isCreator && <Body>
       <Button variant="contained" color="primary" onClick={onCreateCreatorHandler}>
         Create A Creator Account
       </Button>
 
-      <NewCreatorModal currentUser={account} open={modalIsOpen} handleCancel={() => setModalIsOpen(false)} handleCreate={() => setModalIsOpen(false)}></NewCreatorModal>
+      <NewCreatorModal
+        currentUser={account}
+        open={modalIsOpen}
+        handleCancel={() => setModalIsOpen(false)}
+        handleCreate={() => setModalIsOpen(false)}></NewCreatorModal>
     </Body>}
 
-    {isCreator && <CreatorDashboard />}
+    {isCreator && <CreatorDashboard creator={account} />}
   </div>)
 }
 

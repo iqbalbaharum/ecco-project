@@ -5,23 +5,59 @@ const SuperfluidSDK = require("@superfluid-finance/js-sdk");
 
 const SUPERAPP_ADDRESS = process.env.REACT_APP_SUPERAPP_ADDRESS
 
-function getContract (provider) {
-  return new ethers.Contract(SUPERAPP_ADDRESS, abis.payment)
+function getContract () {
+  const wallet = new ethers.Wallet(
+    `0x${process.env.REACT_APP_PRIVATE_KEY}`,
+    ethers.providers.getDefaultProvider(process.env.REACT_APP_NETWORK)
+  );
+  return new ethers.Contract(SUPERAPP_ADDRESS, abis.payment, wallet)
 }
 
-async function isEccoCreator (provider, signerAddress) {
-  const contract = getContract(provider)
+async function isEccoCreator (signerAddress) {
+  const contract = getContract()
   return await contract.isEccoCreator(signerAddress)
 }
 
-async function createCreator (provider, creatorAddress, paymentTokenAddress, rewardTokenAddress, paymentRate, rewardRate) {
-  const contract = getContract(creatorAddress)
-  await contract._createEccoCreator(
+async function getFlowRate (creatorAddress) {
+  const contract = getContract()
+  return await contract.getPaymentRate(creatorAddress)
+}
+
+async function getPaymentTokenAddress (creatorAddress) {
+  const contract = getContract()
+  let address = await contract.getPaymentTokenAddress(creatorAddress)
+  console.log(address)
+  return address
+}
+
+async function createCreator (creatorAddress, paymentTokenAddress, rewardTokenAddress, paymentRate, rewardRate) {
+  const contract = getContract()
+  await contract.createEccoCreator(
     creatorAddress,
     paymentTokenAddress,
     rewardTokenAddress,
-    paymentRate,
-    rewardRate)
+    parseFloat(paymentRate) * 1e18,
+    parseFloat(rewardRate) * 1e18,
+  )
+
+  return isEccoCreator(creatorAddress)
+}
+
+async function updateCreator (creatorAddress, paymentTokenAddress, rewardTokenAddress, paymentRate, rewardRate) {
+  const contract = getContract()
+  console.log(creatorAddress,
+    paymentTokenAddress,
+    rewardTokenAddress,
+    parseFloat(paymentRate) * 1e18,
+    parseFloat(rewardRate) * 1e18
+  )
+  await contract.updateEccoCreator(
+    creatorAddress,
+    paymentTokenAddress,
+    rewardTokenAddress,
+    parseFloat(paymentRate) * 1e18,
+    parseFloat(rewardRate) * 1e18,
+  )
 }
 
 /**
@@ -31,28 +67,40 @@ async function createCreator (provider, creatorAddress, paymentTokenAddress, rew
  * @param {*} apiKey 
  */
 async function streamPayment (
-  signerAddress,
-  paymentTokenAddress,
-  apiKey
+  fanAddress,
+  creatorAddress
 ) {
+
+  const superTokenAddress = await getPaymentTokenAddress(creatorAddress)
+  console.log(superTokenAddress)
+
   const sf = new SuperfluidSDK.Framework({
     ethers: new Web3Provider(window.ethereum),
-    tokens: ["ETHx"],
   });
 
   await sf.initialize();
-  const abicoder = new ethers.utils.AbiCoder();
 
-  await sf.cfa.createFlow({
-    superToken: paymentTokenAddress,
-    sender: signerAddress,
-    receiver: getContract(new Web3Provider(window.ethereum)).address,
-    flowRate: 1e8,
+  const fanSf = sf.user({
+    address: fanAddress,
+    token: superTokenAddress
+  });
+
+  const abicoder = new ethers.utils.AbiCoder();
+  let flow = await getFlowRate(creatorAddress)
+  console.log(flow)
+  await fanSf.flow({
+    recipient: SUPERAPP_ADDRESS,
+    flowRate: await getFlowRate(creatorAddress),
     userData: abicoder.encode(
       ["uint256", "address"],
-      [1, apiKey]
+      [1, creatorAddress]
     )
-  })
+  });
+}
+
+async function stopAllStream (creatorAddress) {
+  const contract = getContract()
+  return await contract.stopPaymentToEccoCreator(creatorAddress)
 }
 
 /**
@@ -138,5 +186,8 @@ export {
   cancelPaymentStream,
   cancelSocialStream,
   isEccoCreator,
-  createCreator
+  createCreator,
+  updateCreator,
+  getPaymentTokenAddress,
+  stopAllStream
 }

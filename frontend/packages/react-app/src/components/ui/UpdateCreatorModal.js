@@ -1,9 +1,9 @@
 
 import React, { useRef } from 'react';
 import { Dialog, DialogContent, DialogTitle, Button, TextField, DialogActions } from '@material-ui/core'
-import { createCreator } from '../../utils/stream-payment'
+import { updateCreator } from '../../utils/stream-payment'
 
-function NewCreatorModal (props) {
+function UpdateCreatorModal (props) {
 
   const data = {
     creatorAddress: useRef(),
@@ -15,7 +15,7 @@ function NewCreatorModal (props) {
 
   async function createHandler (event) {
     event.preventDefault()
-    await createCreator(
+    await updateCreator(
       data.creatorAddress.current.value,
       data.paymentTokenAddress.current.value,
       data.rewardTokenAddress.current.value,
@@ -29,7 +29,7 @@ function NewCreatorModal (props) {
       onClose={props.onClose}
       aria-labelledby="New Creator Dialog"
     >
-      <DialogTitle id="form-dialog-title">New Creator</DialogTitle>
+      <DialogTitle id="form-dialog-title">Update Creator</DialogTitle>
       <DialogContent>
         <form autoComplete="off">
           <TextField
@@ -55,7 +55,7 @@ function NewCreatorModal (props) {
             type="text"
             fullWidth
             variant="outlined"
-            defaultValue="0xBF6201a6c48B56d8577eDD079b84716BB4918E8A"
+            defaultValue="0x6fC99F5591b51583ba15A8C2572408257A1D2797"
             inputRef={data.paymentTokenAddress}
           />
           <TextField
@@ -66,7 +66,7 @@ function NewCreatorModal (props) {
             type="text"
             fullWidth
             variant="outlined"
-            defaultValue="0x6fC99F5591b51583ba15A8C2572408257A1D2797"
+            defaultValue="0xBF6201a6c48B56d8577eDD079b84716BB4918E8A"
             inputRef={data.rewardTokenAddress}
           />
           <TextField
@@ -96,11 +96,11 @@ function NewCreatorModal (props) {
           Cancel
         </Button>
         <Button onClick={createHandler} color="primary">
-          Create Creator
+          Update Creator
         </Button>
       </DialogActions>
     </Dialog>
   )
 }
 
-export default NewCreatorModal
+export default UpdateCreatorModal
