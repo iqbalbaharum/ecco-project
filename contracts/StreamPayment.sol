@@ -55,10 +55,30 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         emit EccoCreatorCreated(creatorAddr);
     }
 
+    function updateEccoCreator(address creatorAddr,
+        ISuperToken paymentToken, ISuperToken rewardToken,
+        uint paymentRate, uint rewardRate) external override {
+        require(creatorAddr == msg.sender, 'Not authorised');
+        EccoCreator storage dupCreator = creatorMap[creatorAddr];
+        require(_contains(dupCreator.id), 'Ecco Creator not found. Cannot update');
+        if(paymentRate > 0) dupCreator.paymentRate = paymentRate;
+        if(rewardRate > 0) dupCreator.rewardRate = rewardRate;
+        dupCreator.paymentToken = paymentToken;
+        dupCreator.rewardToken = rewardToken;
+
+        emit EccoCreatorUpdated(creatorAddr);
+    }
+
     function getPaymentRate(address creator) external override view returns (uint) {
         require(isEccoCreator(creator), 'Not a Ecco Creator');
         EccoCreator storage eccoCreator = creatorMap[creator];
         return eccoCreator.paymentRate;
+    }
+
+    function getPaymentTokenAddress(address creator) external override view returns (ISuperToken) {
+        require(isEccoCreator(creator), 'Not a Ecco Creator');
+        EccoCreator storage eccoCreator = creatorMap[creator];
+        return eccoCreator.paymentToken;
     }
 
     function isEccoCreator(address creator) public view returns (bool) {
@@ -83,16 +103,16 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     }
 
     // stop flow
-    function stopPaymentToEccoCreator(address creator) external override {
+    // function stopPaymentToEccoCreator(address creator) external override {
 
-        require(isEccoCreator(creator), 'Not a Ecco Creator');
-        EccoCreator storage eccoCreator = creatorMap[creator];
+    //     require(isEccoCreator(creator), 'Not a Ecco Creator');
+    //     EccoCreator storage eccoCreator = creatorMap[creator];
 
-        _stopPaymentFromFanFlow(eccoCreator);
-        _stopRewardToFanFlow(eccoCreator);
+    //     _stopPaymentFromFanFlow(eccoCreator);
+    //     _stopRewardToFanFlow(eccoCreator);
 
-        emit PaymentStreamStopped(msg.sender);
-    }
+    //     emit PaymentStreamStopped(msg.sender);
+    // }
 
     /**************************************************************************
      * SuperApp callbacks
@@ -154,6 +174,35 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         return startPayment(_ctx, creatorAddress);
     }
 
+    function afterAgreementTerminated(
+        ISuperToken,
+        address _agreementClass,
+        bytes32,
+        bytes calldata,
+        bytes calldata /*_cbdata*/,
+        bytes calldata _ctx
+    )
+        external override
+        onlyHost
+        returns (bytes memory)
+    {
+        // According to the app basic law, we should never revert in a termination callback
+        if (!_isCFAv1(_agreementClass)) return _ctx;
+        (address creator) = abi.decode(
+            _host.decodeCtx(_ctx).userData, 
+            (address));
+        
+        require(isEccoCreator(creator), 'Not a Ecco Creator');
+        EccoCreator storage eccoCreator = creatorMap[creator];
+
+        _stopPaymentFromFanFlow(creator, eccoCreator);
+        _stopRewardToFanFlow(creator, eccoCreator);
+
+        emit PaymentStreamStopped(msg.sender);
+        
+        return _ctx;
+    }
+
     /**************************************************************************
      * Private
      *************************************************************************/
@@ -177,14 +226,14 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     /**
      * @dev Stop stream from fan to creator
      */
-    function _stopPaymentFromFanFlow(EccoCreator memory eccoCreator) private {
+    function _stopPaymentFromFanFlow(address creator, EccoCreator memory eccoCreator) private {
         _host.callAgreement(
             _agreement,
             abi.encodeWithSelector(
                 _agreement.deleteFlow.selector,
                 eccoCreator.paymentToken,
                 address(this),
-                msg.sender,
+                creator,
                 new bytes(0)
             ),
             "0x"
@@ -273,7 +322,7 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     /**
      * @dev Stop stream from fan to creator
      */
-    function _stopRewardToFanFlow(EccoCreator memory eccoCreator) private {
+    function _stopRewardToFanFlow(address creator, EccoCreator memory eccoCreator) private {
         
         _host.callAgreement(
             _agreement,
@@ -286,6 +335,8 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
             ),
             new bytes(0)
         );
+
+        emit RewardStreamStopped(creator);
     }
 
     function _isCFAv1(address agreementClass) private view returns (bool) {

@@ -1,5 +1,6 @@
 import { task } from "hardhat/config";
 import "@nomiclabs/hardhat-waffle";
+import "@nomiclabs/hardhat-ethers";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -23,7 +24,8 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
  */
 
 const INFURA_API_KEY = process.env.INFURA_KEY
-const PRIVATE_KEY = process.env.PRIVATE_KEY
+const ROPSTEN_PRIVATE_KEY = process.env.PRIVATE_KEY
+const GOERLI_PRIVATE_KEY = process.env.PRIVATE_KEY
 
 module.exports = {
   solidity: "0.8.4",
@@ -36,8 +38,12 @@ module.exports = {
     },
     ropsten: {
       url: `https://ropsten.infura.io/v3/${INFURA_API_KEY}`,
-      accounts: [`0x${PRIVATE_KEY}`]
-    }
+      accounts: [`0x${ROPSTEN_PRIVATE_KEY}`]
+    },
+    goerli: {
+      url: `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
+      accounts: [`0x${GOERLI_PRIVATE_KEY}`],
+    },
   }
 };
 
