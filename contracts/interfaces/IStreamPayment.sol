@@ -11,11 +11,22 @@ interface IStreamPayment {
         ISuperToken paymentToken, ISuperToken rewardToken,
         uint paymentRate, uint rewardRate) external;
 
+    function updateEccoCreator(address creatorAddr,
+        ISuperToken paymentToken, ISuperToken rewardToken,
+        uint paymentRate, uint rewardRate) external;
+
+    // get payment token address
+    function getPaymentTokenAddress(address creator) external view returns (ISuperToken);
+
     // Method to get the payment rate of the creator
     function getPaymentRate(address creator) external view returns (uint);
 
     // Method to stop payment from fan to creator
-    function stopPaymentToEccoCreator(address creator) external;
+    // function stopPaymentToEccoCreator(address creator) external;
+
+
+    // Triggered when #updatedEccoCreator is called
+    event EccoCreatorUpdated(address creator);
 
     // Triggered when #createEccoCreator is called
     event EccoCreatorCreated(address creator);
