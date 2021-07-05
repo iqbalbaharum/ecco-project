@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useEffect, useContext } from "react";
 import Web3 from 'web3'
-import { Button, Box, Typography } from '@material-ui/core'
+import { Button, Box, Typography, Grid } from '@material-ui/core'
 import { streamPayment, stopAllStream } from '../utils/stream-payment'
 import AppContext from '../store/app'
+import ReactPlayer from 'react-player/youtube'
 
 function FanPage (props) {
   const appContext = useContext(AppContext)
@@ -38,16 +39,35 @@ function FanPage (props) {
 
   return (
     <div>
-      <Button variant="contained" color="primary" onClick={() => streamPaymentHandler()}>Payment</Button>
-      <Button variant="contained" color="primary" onClick={() => stopPaymentHandler()}>Stop Payment</Button>
-      <Box>
-        <Box><Typography variant="h6">Payments Transferred</Typography></Box>
-        <Typography variant="h6" color="primary">0.00</Typography>
-      </Box>
-      <Box>
-        <Box><Typography variant="h6">Token Earned</Typography></Box>
-        <Typography variant="h6" color="primary">0.00</Typography>
-      </Box>
+      <Grid container spacing={3}>
+        
+        <Grid item md={12}>
+          <Box align="center">
+            Pay: Stream rate: 0.3 USD / minute - RECEIVE: fan reward 2 $ARTSTREAM/minute
+          </Box>
+        </Grid>
+        <Grid item md={12}>
+          <Box align="center">
+            <ReactPlayer url='https://www.youtube.com/watch?v=ysz5S6PUM-U' />
+          </Box>
+        </Grid>
+        <Grid item md={12}>
+          <Box align="center">
+            <Grid container>
+              <Grid item md={6}>
+                <Box>
+                  <Button variant="contained" color="primary" onClick={() => stopPaymentHandler()}>Stop Payment</Button>
+                </Box>
+              </Grid>
+              <Grid item md={6}>
+                <Box align="center">
+                  <Button variant="contained" color="primary" onClick={() => streamPaymentHandler()}>Payment</Button>
+                </Box>
+              </Grid>
+            </Grid>
+          </Box>
+        </Grid>
+      </Grid>
 
     </div>
   )

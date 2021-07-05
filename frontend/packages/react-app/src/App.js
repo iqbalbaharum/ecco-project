@@ -13,6 +13,7 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import Fan from './pages/Fan'
 import NewTokenPage from './pages/NewToken/NewToken'
 import CreateCreatorPage from './pages/CreateCreator/CreateCreator'
+import MainPage from './pages/Index/Main'
 
 function App () {
   // const { loading, error, data } = useQuery(GET_TRANSFERS);
@@ -47,6 +48,9 @@ function App () {
     <MainLayout>
       <Switch>
         <Route path="/" exact>
+          <MainPage />
+        </Route>
+        <Route path="/dashboard" exact>
           <Dashboard creator={account} />
         </Route>
         <Route path="/fan" exact>
@@ -55,7 +59,7 @@ function App () {
         <Route path="/new" exact>
           <NewTokenPage creator={account} />
         </Route>
-        <Route path="/first" exact>
+        <Route path="/stream" exact>
           <CreateCreatorPage creator={account} />
         </Route>
       </Switch>

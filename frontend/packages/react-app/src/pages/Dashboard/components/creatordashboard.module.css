@@ -3,3 +3,12 @@
   color: grey;
   padding: 0.5rem;
 }
+
+.header {
+  background-color: white;
+  color: black;
+}
+
+.price {
+  font-family: 'Open 24 display st', sans-serif;
+}

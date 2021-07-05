@@ -42,7 +42,7 @@ async function generateNewToken (name, symbol, supply, creatorAddress) {
 
   console.debug(`ERC20 Token generated: ${contract.address}`)
   
-  generateNewSuperToken(signer, creatorAddress, contract.address)
+  generateNewSuperToken(signer, creatorAddress, contract.address.toString())
   return contract.address
 }
 
@@ -82,11 +82,6 @@ async function getTokenDetail(address) {
     name,
     symbol
   }
-}
-
-async function upgradeToken(superTokenAddress) {
-  const contract = getContract()
-  contract.upgrade()
 }
 
 export { generateNewToken, getOwnerToken, getTokenDetail }

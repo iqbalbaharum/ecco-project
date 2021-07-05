@@ -12,3 +12,50 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.button {
+  margin-top: 20px;
+  padding: 12px 25px;
+  border-radius: 0px;
+  background-color: #cf44bd;
+  -webkit-transition: background-color 400ms ease, opacity 400ms ease,
+    color 400ms ease;
+  transition: background-color 400ms ease, opacity 400ms ease, color 400ms ease;
+  font-family: 'Gabriel sans 2', sans-serif;
+  color: #fff;
+  font-size: 20px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-decoration: none;
+  text-transform: capitalize;
+}
+
+@font-face {
+  font-family: 'Open 24 display st';
+  src: url('./fonts/Open-24-Display-St.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Gabriel sans 2';
+  src: url('./fonts/Gabriel-Sans-Black-2.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Gabriel sans 2';
+  src: url('./fonts/Gabriel-Sans-Normal-2.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Itc fenice';
+  src: url('./fonts/itc-fenice-regular-oblique.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}

@@ -1,5 +1,3 @@
-### Questions
+### MoneyHack 2021 Hackathon
 
-1. Create creator account
-2. Create ERC20 social token
-3. Creator able to stream social token to SuperApp
+## Architecture

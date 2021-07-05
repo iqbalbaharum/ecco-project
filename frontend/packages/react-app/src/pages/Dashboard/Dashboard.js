@@ -36,16 +36,10 @@ function Dashboard () {
     }
   }, [appContext.provider, getWeb3Account])
 
-  async function onCreateCreatorHandler () {
-    setModalIsOpen(true);
-    let data = await getOwnerToken(account)
-    console.log(data)
-  }
-
   return (<div>
     {!isCreator && <Body>
       <Button variant="contained" color="primary" href="/new">
-        Create A Creator Account
+        Launch your Creator Token
       </Button>
     </Body>}
 
