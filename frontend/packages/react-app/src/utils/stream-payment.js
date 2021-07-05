@@ -5,11 +5,18 @@ const SuperfluidSDK = require("@superfluid-finance/js-sdk");
 
 const SUPERAPP_ADDRESS = process.env.REACT_APP_SUPERAPP_ADDRESS
 
-function getContract () {
-  const wallet = new ethers.Wallet(
-    `0x${process.env.REACT_APP_PRIVATE_KEY}`,
-    ethers.providers.getDefaultProvider(process.env.REACT_APP_NETWORK)
-  );
+function getContract (signer) {
+  let wallet
+  
+  if(!signer) {
+    wallet = new ethers.Wallet(
+      `0x${process.env.REACT_APP_PRIVATE_KEY}`,
+      ethers.providers.getDefaultProvider(process.env.REACT_APP_NETWORK)
+    );
+  } else {
+    wallet = new ethers.providers.Web3Provider(window.ethereum).getSigner()
+  }
+  
   return new ethers.Contract(SUPERAPP_ADDRESS, abis.payment, wallet)
 }
 
@@ -26,12 +33,11 @@ async function getFlowRate (creatorAddress) {
 async function getPaymentTokenAddress (creatorAddress) {
   const contract = getContract()
   let address = await contract.getPaymentTokenAddress(creatorAddress)
-  console.log(address)
   return address
 }
 
 async function createCreator (creatorAddress, paymentTokenAddress, rewardTokenAddress, paymentRate, rewardRate) {
-  const contract = getContract()
+  const contract = getContract('signer')
   await contract.createEccoCreator(
     creatorAddress,
     paymentTokenAddress,
@@ -87,10 +93,10 @@ async function streamPayment (
 
   const abicoder = new ethers.utils.AbiCoder();
   let flow = await getFlowRate(creatorAddress)
-  console.log(flow)
+
   await fanSf.flow({
     recipient: SUPERAPP_ADDRESS,
-    flowRate: await getFlowRate(creatorAddress),
+    flowRate: flow,
     userData: abicoder.encode(
       ["uint256", "address"],
       [1, creatorAddress]

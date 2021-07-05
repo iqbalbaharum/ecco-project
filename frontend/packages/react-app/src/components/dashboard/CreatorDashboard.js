@@ -1,8 +1,9 @@
 
-import React, { useState } from "react";
-import { Grid, Box, Typography, Button } from '@material-ui/core';
+import React, { useEffect, useState } from "react";
+import { Grid, Box, Typography, Button, TextField } from '@material-ui/core';
 import { streamSocialToken } from '../../utils/stream-payment'
 import UpdateCreatorModal from "../ui/UpdateCreatorModal";
+import { getOwnerToken } from  '../../utils/token'
 
 function CreatorDashboard (props) {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -17,6 +18,10 @@ function CreatorDashboard (props) {
   async function updateHandler (event) {
     setModalIsOpen(true)
   }
+  
+  useEffect(async () => {
+    console.log(await getOwnerToken(props.creator))
+  }, [getOwnerToken])
 
   return (
     <div>
@@ -33,16 +38,28 @@ function CreatorDashboard (props) {
         </Grid>
         {/* statistic */}
         <Grid item md={4}>
-          <Box><Typography variant="h6">Stream Balance</Typography></Box>
+          <Box><Typography variant="h6">Payments Earned</Typography></Box>
           <Typography variant="h6" color="primary">0.00</Typography>
         </Grid>
         <Grid item md={4}>
-          <Typography variant="h6">NFT Balance</Typography >
+          <Typography variant="h6">Interest Earned</Typography >
           <Typography variant="h6" color="primary">0.00</Typography>
         </Grid>
         <Grid item md={4}>
-          <Typography variant="h6">DeFi Balance</Typography >
+          <Typography variant="h6">Creator Token</Typography >
           <Typography variant="h6" color="primary">0.00</Typography>
+        </Grid>
+        <Grid item md={12}>
+          <TextField
+            id="outlined-textarea"
+            label="Multiline Placeholder"
+            placeholder="Placeholder"
+            multiline
+            variant="filled"
+          />
+        </Grid>
+        <Grid item md={12}>
+          <Button variant="contained" color="primary" onClick={() => updateHandler()}>Copy Payment Widget</Button>
         </Grid>
       </Grid>
 

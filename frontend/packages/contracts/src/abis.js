@@ -1,11 +1,11 @@
 import erc20Abi from "./abis/erc20.json";
-import ownableAbi from "./abis/ownable.json";
 import payment from './abis/payment.json'
+import rewardTokenES from './abis/rewardTokenES.json'
 
 const abis = {
   erc20: erc20Abi,
-  ownable: ownableAbi,
-  payment: payment
+  payment: payment,
+  rewardTokenES: rewardTokenES
 };
 
 export default abis;

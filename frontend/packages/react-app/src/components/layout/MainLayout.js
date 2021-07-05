@@ -2,11 +2,11 @@ import React from "react";
 import MainNavigationLayout from './MainNavigation'
 import { Container } from '@material-ui/core'
 
-function MainLayout(props) {
+function MainLayout (props) {
   return (
     <div>
       <MainNavigationLayout />
-      <Container maxWidth="sm">
+      <Container>
         <main>{props.children}</main>
       </Container>
     </div>

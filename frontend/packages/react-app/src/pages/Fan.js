@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useContext } from "react";
 import Web3 from 'web3'
-import { Button } from '@material-ui/core'
+import { Button, Box, Typography } from '@material-ui/core'
 import { streamPayment, stopAllStream } from '../utils/stream-payment'
 import AppContext from '../store/app'
 
@@ -40,6 +40,15 @@ function FanPage (props) {
     <div>
       <Button variant="contained" color="primary" onClick={() => streamPaymentHandler()}>Payment</Button>
       <Button variant="contained" color="primary" onClick={() => stopPaymentHandler()}>Stop Payment</Button>
+      <Box>
+        <Box><Typography variant="h6">Payments Transferred</Typography></Box>
+        <Typography variant="h6" color="primary">0.00</Typography>
+      </Box>
+      <Box>
+        <Box><Typography variant="h6">Token Earned</Typography></Box>
+        <Typography variant="h6" color="primary">0.00</Typography>
+      </Box>
+
     </div>
   )
 }

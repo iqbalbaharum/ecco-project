@@ -1,520 +1,507 @@
 [
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISuperfluid",
-        "name": "host",
-        "type": "address"
-      },
-      {
-        "internalType": "contract IConstantFlowAgreementV1",
-        "name": "cfa",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "AppToCreatorStreamCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "AppToCreatorStreamUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "fan",
-        "type": "address"
-      }
-    ],
-    "name": "AppToFanRewardStreamCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "EccoCreatorCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "EccoCreatorUpdated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "fan",
-        "type": "address"
-      }
-    ],
-    "name": "FanPaymentStreamCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "fan",
-        "type": "address"
-      }
-    ],
-    "name": "FanPaymentStreamStopped",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "fan",
-        "type": "address"
-      }
-    ],
-    "name": "PaymentStreamStopped",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "fan",
-        "type": "address"
-      }
-    ],
-    "name": "RewardStreamStopped",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISuperToken",
-        "name": "_superToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_agreementClass",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_ctx",
-        "type": "bytes"
-      }
-    ],
-    "name": "afterAgreementCreated",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "newCtx",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISuperToken",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "afterAgreementTerminated",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISuperToken",
-        "name": "_superToken",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_agreementClass",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_ctx",
-        "type": "bytes"
-      }
-    ],
-    "name": "afterAgreementUpdated",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "newCtx",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISuperToken",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "beforeAgreementCreated",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISuperToken",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "beforeAgreementTerminated",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract ISuperToken",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "beforeAgreementUpdated",
-    "outputs": [
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "creatorAddr",
-        "type": "address"
-      },
-      {
-        "internalType": "contract ISuperToken",
-        "name": "paymentToken",
-        "type": "address"
-      },
-      {
-        "internalType": "contract ISuperToken",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "paymentRate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rewardRate",
-        "type": "uint256"
-      }
-    ],
-    "name": "createEccoCreator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "getPaymentRate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "getPaymentTokenAddress",
-    "outputs": [
-      {
-        "internalType": "contract ISuperToken",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "isEccoCreator",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "stopPaymentToEccoCreator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "creatorAddr",
-        "type": "address"
-      },
-      {
-        "internalType": "contract ISuperToken",
-        "name": "paymentToken",
-        "type": "address"
-      },
-      {
-        "internalType": "contract ISuperToken",
-        "name": "rewardToken",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "paymentRate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "rewardRate",
-        "type": "uint256"
-      }
-    ],
-    "name": "updateEccoCreator",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  }
-]
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperfluid",
+          "name": "host",
+          "type": "address"
+        },
+        {
+          "internalType": "contract IConstantFlowAgreementV1",
+          "name": "cfa",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        }
+      ],
+      "name": "AppToCreatorStreamCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        }
+      ],
+      "name": "AppToCreatorStreamUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "fan",
+          "type": "address"
+        }
+      ],
+      "name": "AppToFanRewardStreamCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        }
+      ],
+      "name": "EccoCreatorCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        }
+      ],
+      "name": "EccoCreatorUpdated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "fan",
+          "type": "address"
+        }
+      ],
+      "name": "FanPaymentStreamCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "fan",
+          "type": "address"
+        }
+      ],
+      "name": "FanPaymentStreamStopped",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "fan",
+          "type": "address"
+        }
+      ],
+      "name": "PaymentStreamStopped",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "fan",
+          "type": "address"
+        }
+      ],
+      "name": "RewardStreamStopped",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "_superToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_agreementClass",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_ctx",
+          "type": "bytes"
+        }
+      ],
+      "name": "afterAgreementCreated",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "newCtx",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_agreementClass",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_ctx",
+          "type": "bytes"
+        }
+      ],
+      "name": "afterAgreementTerminated",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "newContext",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "_superToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_agreementClass",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_ctx",
+          "type": "bytes"
+        }
+      ],
+      "name": "afterAgreementUpdated",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "newCtx",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "beforeAgreementCreated",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "beforeAgreementTerminated",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "name": "beforeAgreementUpdated",
+      "outputs": [
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "creatorAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "contract ISuperToken",
+          "name": "paymentToken",
+          "type": "address"
+        },
+        {
+          "internalType": "contract ISuperToken",
+          "name": "rewardToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paymentRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rewardRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "createEccoCreator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        }
+      ],
+      "name": "getPaymentRate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        }
+      ],
+      "name": "getPaymentTokenAddress",
+      "outputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        }
+      ],
+      "name": "isEccoCreator",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "creatorAddr",
+          "type": "address"
+        },
+        {
+          "internalType": "contract ISuperToken",
+          "name": "paymentToken",
+          "type": "address"
+        },
+        {
+          "internalType": "contract ISuperToken",
+          "name": "rewardToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "paymentRate",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rewardRate",
+          "type": "uint256"
+        }
+      ],
+      "name": "updateEccoCreator",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]

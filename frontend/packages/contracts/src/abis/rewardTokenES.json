@@ -1,0 +1,63 @@
+[
+    {
+      "inputs": [
+        {
+          "internalType": "contract ISuperfluid",
+          "name": "host",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "getOwnerToken",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "unwrapped",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "wrapped",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct SocialTokenES.SocialTokenConvertData",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ERC20WithTokenInfo",
+          "name": "unwrappedErc20Token",
+          "type": "address"
+        }
+      ],
+      "name": "setUserSocialToken",
+      "outputs": [
+        {
+          "internalType": "contract ISuperToken",
+          "name": "wrappedSuperToken",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ]
