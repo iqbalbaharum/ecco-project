@@ -19,10 +19,10 @@ contract SocialTokenES {
         _factory = host.getSuperTokenFactory();
     }
 
-    function setUserSocialToken(ERC20WithTokenInfo unwrappedErc20Token)
-        external
-        returns (ISuperToken wrappedSuperToken)
-    {
+    function setUserSocialToken(
+        address creator,
+        ERC20WithTokenInfo unwrappedErc20Token
+    ) external returns (ISuperToken wrappedSuperToken) {
         string memory name = string(
             abi.encodePacked("Super ", unwrappedErc20Token.name())
         );
@@ -38,12 +38,14 @@ contract SocialTokenES {
         );
 
         wrappedSuperToken.upgrade(0);
+        // allow super app to manage the token
+        unwrappedErc20Token.approve(address(wrappedSuperToken), 1000000000000);
 
         SocialTokenConvertData memory data;
         data.unwrapped = address(unwrappedErc20Token);
         data.wrapped = address(wrappedSuperToken);
 
-        socialTokenOwners[msg.sender] = data;
+        socialTokenOwners[creator] = data;
     }
 
     function getOwnerToken(address owner)

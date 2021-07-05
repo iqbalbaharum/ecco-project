@@ -1,13 +1,13 @@
 
 import React from "react";
 import Web3 from 'web3'
-import { Body } from '../components'
+import { Body } from '../../components'
 import { Button } from '@material-ui/core';
-import NewCreatorModal from '../components/ui/NewCreatorModal'
-import CreatorDashboard from '../components/dashboard/CreatorDashboard'
+import CreatorDashboard from './components/CreatorDashboard'
 import { useState, useContext, useEffect, useCallback } from 'react';
-import { isEccoCreator } from '../utils/stream-payment'
-import AppContext from '../store/app'
+import { isEccoCreator } from '../../utils/stream-payment'
+import { getOwnerToken } from '../../utils/token'
+import AppContext from '../../store/app'
 
 function Dashboard () {
   const appContext = useContext(AppContext)
@@ -21,7 +21,7 @@ function Dashboard () {
     if (typeof web3 !== 'undefined') {
       web3 = new Web3(web3.currentProvider);
       await web3.eth.getAccounts().then(async (accounts) => {
-        setAccount(accounts)
+        setAccount(accounts[0])
         if (accounts) {
           const b = await isEccoCreator(accounts[0])
           setIsCreator(b)
@@ -36,21 +36,17 @@ function Dashboard () {
     }
   }, [appContext.provider, getWeb3Account])
 
-  function onCreateCreatorHandler () {
+  async function onCreateCreatorHandler () {
     setModalIsOpen(true);
+    let data = await getOwnerToken(account)
+    console.log(data)
   }
 
   return (<div>
     {!isCreator && <Body>
-      <Button variant="contained" color="primary" onClick={onCreateCreatorHandler}>
+      <Button variant="contained" color="primary" href="/new">
         Create A Creator Account
       </Button>
-
-      <NewCreatorModal
-        currentUser={account}
-        open={modalIsOpen}
-        handleCancel={() => setModalIsOpen(false)}
-        handleCreate={() => setModalIsOpen(false)}></NewCreatorModal>
     </Body>}
 
     {isCreator && <CreatorDashboard creator={account} />}

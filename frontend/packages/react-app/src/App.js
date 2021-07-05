@@ -9,9 +9,10 @@ import { Route, Switch } from 'react-router-dom';
 // import { addresses, abis } from "@project/contracts";
 // import GET_TRANSFERS from "./graphql/subgraph";
 import MainLayout from './components/layout/MainLayout'
-import Dashboard from './pages/Dashboard'
+import Dashboard from './pages/Dashboard/Dashboard'
 import Fan from './pages/Fan'
 import NewTokenPage from './pages/NewToken/NewToken'
+import CreateCreatorPage from './pages/CreateCreator/CreateCreator'
 
 function App () {
   // const { loading, error, data } = useQuery(GET_TRANSFERS);
@@ -53,6 +54,9 @@ function App () {
         </Route>
         <Route path="/new" exact>
           <NewTokenPage creator={account} />
+        </Route>
+        <Route path="/first" exact>
+          <CreateCreatorPage creator={account} />
         </Route>
       </Switch>
     </MainLayout>

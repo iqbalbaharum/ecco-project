@@ -44,6 +44,11 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "creator",
+          "type": "address"
+        },
+        {
           "internalType": "contract ERC20WithTokenInfo",
           "name": "unwrappedErc20Token",
           "type": "address"
