@@ -23,6 +23,7 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     IConstantFlowAgreementV1 private _agreement;
 
     mapping(address => EccoCreator) private creatorMap;
+
     int256 private creatorCount;
 
     constructor(ISuperfluid host, IConstantFlowAgreementV1 cfa) {
@@ -203,7 +204,7 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         require(isEccoCreator(creator), "Not a Ecco Creator");
         EccoCreator storage eccoCreator = creatorMap[creator];
 
-        newContext = _updatePaymentToCreatorFlow(_ctx, creator, eccoCreator);
+        newContext = _updatePaymentToCreatorFlow(_ctx, creator, eccoCreator, false);
         newContext = _stopRewardToFanFlow(_ctx, creator, eccoCreator);
 
         emit PaymentStreamStopped(msg.sender);
@@ -232,7 +233,8 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
         newContext = _updatePaymentToCreatorFlow(
             _context,
             creator,
-            eccoCreator
+            eccoCreator,
+            true
         );
 
         return newContext;
@@ -245,63 +247,67 @@ contract StreamPayment is SuperAppBase, IStreamPayment {
     function _updatePaymentToCreatorFlow(
         bytes memory _context,
         address creatorAddress,
-        EccoCreator memory eccoCreator
+        EccoCreator memory eccoCreator,
+        bool create
     ) private returns (bytes memory newContext) {
         newContext = _context;
         ISuperToken paymentToken = eccoCreator.paymentToken;
         address _receiver = creatorAddress;
         // @dev This will give me the new flowRate, as it is called in after callbacks
-        int96 netFlowRate = _agreement.getNetFlow(paymentToken, address(this));
+        // int96 netFlowRate = _agreement.getNetFlow(paymentToken, address(this));
         (, int96 outFlowRate, , ) = _agreement.getFlow(
             paymentToken,
             address(this),
             _receiver
         );
-        int96 inFlowRate = netFlowRate + outFlowRate;
-        if (inFlowRate < 0) inFlowRate = -inFlowRate; // Fixes issue when inFlowRate is negative
+        // int96 inFlowRate = netFlowRate + outFlowRate;
+        // if (inFlowRate < 0) inFlowRate = -inFlowRate; // Fixes issue when inFlowRate is negative
 
         // @dev If outFlowRate != 0, then update existing flow.
-        if (inFlowRate != int96(0)) {
+        if (outFlowRate != int96(0)) {
             (newContext, ) = _host.callAgreementWithContext(
                 _agreement,
                 abi.encodeWithSelector(
                     _agreement.updateFlow.selector,
                     paymentToken,
                     _receiver,
-                    inFlowRate,
+                    outFlowRate,
                     new bytes(0) // placeholder
                 ),
                 "0x",
                 newContext
             );
 
-        } else if (inFlowRate == int96(0)) {
-            // @dev if inFlowRate is zero, delete flow.
-            (newContext, ) = _host.callAgreementWithContext(
-                _agreement,
-                abi.encodeWithSelector(
-                    _agreement.deleteFlow.selector,
-                    paymentToken,
-                    address(this),
-                    _receiver,
-                    new bytes(0) // placeholder
-                ),
-                "0x",
-                newContext
-            );
         } else {
-            (newContext, ) = _host.callAgreementWithContext(
-                _agreement,
-                abi.encodeWithSelector(
-                    _agreement.createFlow.selector,
-                    paymentToken,
-                    creatorAddress,
-                    _agreement.getNetFlow(paymentToken, address(this)),
-                    new bytes(0)
-                ),
-                "0x",
-                _context
-            );
+            if(create) {
+
+                (newContext, ) = _host.callAgreementWithContext(
+                    _agreement,
+                    abi.encodeWithSelector(
+                        _agreement.createFlow.selector,
+                        paymentToken,
+                        creatorAddress,
+                        eccoCreator.paymentRate,
+                        new bytes(0)
+                    ),
+                    "0x",
+                    _context
+                );
+                
+            } else {
+                (newContext, ) = _host.callAgreementWithContext(
+                    _agreement,
+                    abi.encodeWithSelector(
+                        _agreement.deleteFlow.selector,
+                        paymentToken,
+                        address(this),
+                        _receiver,
+                        new bytes(0) // placeholder
+                    ),
+                    "0x",
+                    newContext
+                );
+            }
         }
 
         emit AppToCreatorStreamCreated(creatorAddress);
